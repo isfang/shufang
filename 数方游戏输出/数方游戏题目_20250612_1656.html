@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数方小游戏题目集</title>
+    
+<style>
+body {
+    font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+    margin: 20px;
+    line-height: 1.6;
+    color: #333;
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    border-bottom: 3px solid #3498db;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #27ae60;
+    border-left: 4px solid #27ae60;
+    padding-left: 15px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+h3 {
+    color: #8e44ad;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.rules {
+    background-color: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.rules ol {
+    margin: 10px 0;
+    padding-left: 25px;
+}
+
+.rules li {
+    margin: 8px 0;
+}
+
+.example {
+    background-color: #e8f5e8;
+    border: 2px solid #27ae60;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.puzzle-grid, .solution-grid {
+    border-collapse: collapse;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.puzzle-grid td, .solution-grid td {
+    width: 35px;
+    height: 35px;
+    border: 2px solid #2c3e50;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.solution-grid td {
+    background-color: #ffffff;
+}
+
+.puzzle-grid td.number {
+    background-color: #ecf0f1;
+    color: #e74c3c;
+    font-size: 16px;
+}
+
+.solution-cell {
+    color: #2c3e50;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* 12种不同的区域颜色 - 使用更高优先级的选择器 */
+.solution-grid td.region-1 { background-color: #ffebeb !important; border: 3px solid #e74c3c !important; }  /* 红色系 */
+.solution-grid td.region-2 { background-color: #e8f5e8 !important; border: 3px solid #27ae60 !important; }  /* 绿色系 */
+.solution-grid td.region-3 { background-color: #e3f2fd !important; border: 3px solid #3498db !important; }  /* 蓝色系 */
+.solution-grid td.region-4 { background-color: #fff3e0 !important; border: 3px solid #f39c12 !important; }  /* 橙色系 */
+.solution-grid td.region-5 { background-color: #f3e5f5 !important; border: 3px solid #9b59b6 !important; }  /* 紫色系 */
+.solution-grid td.region-6 { background-color: #e0f2f1 !important; border: 3px solid #1abc9c !important; }  /* 青色系 */
+.solution-grid td.region-7 { background-color: #fce4ec !important; border: 3px solid #e91e63 !important; }  /* 粉色系 */
+.solution-grid td.region-8 { background-color: #f1f8e9 !important; border: 3px solid #8bc34a !important; }  /* 浅绿系 */
+.solution-grid td.region-9 { background-color: #e8eaf6 !important; border: 3px solid #673ab7 !important; }  /* 深紫系 */
+.solution-grid td.region-10 { background-color: #fff8e1 !important; border: 3px solid #ffc107 !important; } /* 黄色系 */
+.solution-grid td.region-11 { background-color: #fafafa !important; border: 3px solid #607d8b !important; } /* 灰色系 */
+.solution-grid td.region-12 { background-color: #ffebee !important; border: 3px solid #ff5722 !important; } /* 深橙系 */
+
+.puzzle-container {
+    page-break-inside: avoid;
+    margin-bottom: 40px;
+}
+
+.info-box {
+    background-color: #e3f2fd;
+    border: 1px solid #2196f3;
+    border-radius: 6px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+}
+
+@media print {
+    body {
+        margin: 10px;
+    }
+    
+    h1 {
+        page-break-after: avoid;
+    }
+    
+    .puzzle-container {
+        page-break-inside: avoid;
+        margin-bottom: 30px;
+    }
+    
+    .puzzle-grid td, .solution-grid td {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+    .puzzle-grid td.number {
+        font-size: 14px;
+    }
+}
+</style>
+
+</head>
+<body>
+    <h1>🎯 数方小游戏题目集</h1>
+    
+    <div class="rules">
+        <h2>游戏规则说明</h2>
+        <ol>
+            <li>用直线将网格划分为若干个长方形或正方形区域</li>
+            <li>每个区域必须包含一个数字</li>
+            <li>数字表示该区域的面积（长×宽）</li>
+            <li>所有区域不重叠，完全覆盖整个网格</li>
+        </ol>
+    </div>
+    
+    <div class="example">
+        <h3>示例说明</h3>
+        <p><strong>规则</strong>：看到数字2，要画出一个面积为2的矩形（可能是2×1或1×2）</p>
+        <p><strong>目标</strong>：所有数字都被包含在对应大小的矩形中，整个网格被完全填满</p>
+    </div>
+
+    <h2>3×3 网格题目 (2题)</h2>
+    <div class="puzzle-container">
+        <h3>第 1 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td class="number">2</td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+    </div>
+    <div class="puzzle-container">
+        <h3>第 2 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">3</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+  </tr>
+</table>
+    </div>
+    <h2>4×4 网格题目 (5题)</h2>
+    <div class="puzzle-container">
+        <h3>第 3 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">1</td>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">2</td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td class="number">3</td>
+    <td class="number">2</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td class="number">2</td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+  </tr>
+</table>
+    </div>
+    <div class="puzzle-container">
+        <h3>第 4 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">1</td>
+    <td class="number">6</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td class="number">2</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">2</td>
+    <td></td>
+  </tr>
+</table>
+    </div>
+    <div class="puzzle-container">
+        <h3>第 5 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">4</td>
+    <td></td>
+    <td class="number">3</td>
+    <td class="number">4</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">3</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+    </div>
+    <div class="puzzle-container">
+        <h3>第 6 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">4</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">3</td>
+    <td class="number">2</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+  </tr>
+</table>
+    </div>
+    <div class="puzzle-container">
+        <h3>第 7 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td class="number">4</td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td class="number">1</td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+</table>
+    </div>
+    <h2>5×5 网格题目 (4题)</h2>
+    <div class="puzzle-container">
+        <h3>第 8 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">4</td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">2</td>
+    <td class="number">5</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td class="number">2</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">3</td>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">3</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td class="number">2</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+    </div>
+    <div class="puzzle-container">
+        <h3>第 9 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">1</td>
+    <td class="number">2</td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td class="number">5</td>
+  </tr>
+  <tr>
+    <td class="number">3</td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">2</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">2</td>
+    <td class="number">3</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+  </tr>
+</table>
+    </div>
+    <div class="puzzle-container">
+        <h3>第 10 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">2</td>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">4</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">2</td>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">3</td>
+    <td></td>
+    <td class="number">3</td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+    <td class="number">2</td>
+    <td class="number">2</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+    </div>
+    <div class="puzzle-container">
+        <h3>第 11 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">1</td>
+    <td class="number">3</td>
+    <td class="number">6</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td class="number">6</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td class="number">3</td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+</table>
+    </div>
+    <h2>6×6 网格题目 (3题)</h2>
+    <div class="puzzle-container">
+        <h3>第 12 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">2</td>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">3</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td class="number">6</td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">3</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">6</td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+  </tr>
+</table>
+    </div>
+    <div class="puzzle-container">
+        <h3>第 13 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">1</td>
+    <td class="number">8</td>
+    <td></td>
+    <td class="number">5</td>
+    <td class="number">2</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">4</td>
+  </tr>
+  <tr>
+    <td class="number">3</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">3</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">3</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+    </div>
+    <div class="puzzle-container">
+        <h3>第 14 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">5</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td class="number">5</td>
+    <td class="number">1</td>
+    <td class="number">6</td>
+    <td></td>
+    <td class="number">2</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td class="number">2</td>
+    <td class="number">2</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">4</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">2</td>
+    <td></td>
+  </tr>
+</table>
+    </div>
+    <h2>7×7 网格题目 (2题)</h2>
+    <div class="puzzle-container">
+        <h3>第 15 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">2</td>
+    <td class="number">3</td>
+    <td class="number">5</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td class="number">4</td>
+    <td></td>
+    <td class="number">3</td>
+    <td class="number">3</td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td class="number">6</td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">4</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td class="number">4</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+  </tr>
+</table>
+    </div>
+    <div class="puzzle-container">
+        <h3>第 16 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">5</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">4</td>
+    <td class="number">2</td>
+  </tr>
+  <tr>
+    <td class="number">3</td>
+    <td></td>
+    <td></td>
+    <td class="number">2</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td class="number">3</td>
+    <td class="number">2</td>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">3</td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">6</td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">2</td>
+    <td class="number">1</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td class="number">2</td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td class="number">1</td>
+  </tr>
+</table>
+    </div>
+    <h2>8×8 网格题目 (1题)</h2>
+    <div class="puzzle-container">
+        <h3>第 17 题</h3>
+        <table class="puzzle-grid">
+  <tr>
+    <td class="number">6</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">3</td>
+    <td class="number">6</td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td></td>
+    <td class="number">1</td>
+    <td class="number">6</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">6</td>
+    <td></td>
+    <td class="number">6</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">4</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="number">3</td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="number">2</td>
+    <td class="number">1</td>
+    <td></td>
+    <td class="number">2</td>
+    <td class="number">1</td>
+    <td class="number">2</td>
+    <td class="number">3</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+    <td></td>
+    <td class="number">2</td>
+    <td></td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+  <tr>
+    <td class="number">1</td>
+    <td class="number">1</td>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+    <td class="number">1</td>
+    <td></td>
+    <td class="number">1</td>
+  </tr>
+</table>
+    </div>
+
+    <div class="footer">
+        <h2>生成信息</h2>
+        <p><strong>生成日期</strong>: 2025年06月12日 16:56</p>
+        <p><strong>总题目数</strong>: 17 题</p>
+        <p><strong>网格配置</strong>: 3×3(2题), 4×4(5题), 5×5(4题), 6×6(3题), 7×7(2题), 8×8(1题)</p>
+        <p>💡 <strong>温馨提示</strong>: 多练习有助于提高逻辑思维能力！建议从小网格开始，逐步挑战大网格。</p>
+        <hr>
+        <p><em>本题目集由AI自动生成，每道题目都经过验证，确保有唯一正确解答。</em></p>
+    </div>
+</body>
+</html>
